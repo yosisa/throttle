@@ -42,6 +42,17 @@ func TestBucketTake(t *testing.T) {
 	}
 }
 
+func TestBucketTakeLarge(t *testing.T) {
+	b := NewBucket(100, 10)
+	n, wait := b.Take(30)
+	if n != 10 {
+		t.Errorf("Tokens got %d, expected 10", n)
+	}
+	if wait != 100*time.Millisecond {
+		t.Errorf("Incorrect wait time: %v", wait)
+	}
+}
+
 func TestBucketCapacity(t *testing.T) {
 	b := NewBucket(10000, 10)
 	time.Sleep(10 * time.Millisecond)

@@ -42,7 +42,8 @@ func (b *Bucket) Take(n int64) (int64, time.Duration) {
 
 	absence := n - intTokens
 	b.tokens -= float64(intTokens)
-	wait := time.Duration((float64(absence) - b.tokens) / b.rate * 1e9)
+	need := min(float64(absence), b.cap)
+	wait := time.Duration((need - b.tokens) / b.rate * 1e9)
 	return intTokens, wait
 }
 
@@ -52,4 +53,11 @@ func (b *Bucket) TakeExactly(n int64) {
 		rem -= tokens
 		time.Sleep(wait)
 	}
+}
+
+func min(a, b float64) float64 {
+	if a < b {
+		return a
+	}
+	return b
 }
